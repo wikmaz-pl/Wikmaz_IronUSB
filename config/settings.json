@@ -1,0 +1,123 @@
+{
+    "app_brand": "WIKMAZ IronUSB Immortal - Full True USB Emulator",
+    "version": "25.0.0-Gold",
+    "language": "en",
+    "author": {
+        "name": "Micha\u0142 S\u0142owi\u0144ski (WIKMAZ)",
+        "website": "https://wikmaz.pl",
+        "suppi": "https://suppi.pl/wikmaz",
+        "kofi": "https://ko-fi.com/wikmaz"
+    },
+    "options": {
+        "http_port": 8080,
+        "usbip_port": 3240,
+        "lan_export_mode": false,
+        "sound_effects": true,
+        "tray_icon_enabled": true,
+        "windows_autostart": false,
+        "auto_backup_zip": true,
+        "autorun_inf_inject": true
+    },
+    "ports": {
+        "1": {
+            "portNumber": 1,
+            "busid": "1-1",
+            "mounted": false,
+            "mode": "image",
+            "target": "WIKMAZ_DISK_64MB.img",
+            "sizeMB": 64,
+            "filesystem": "FAT16",
+            "scheme": "MBR",
+            "shadow_copy": false,
+            "write_protect": false,
+            "ram_disk": false,
+            "profile": {
+                "id": "kingston",
+                "vendorName": "Kingston Technology",
+                "productName": "DataTraveler 100 G3",
+                "vid": "0951",
+                "pid": "1666",
+                "rev": "0100",
+                "serial": "0014D112BE54F8C0",
+                "vendorStr": "Kingston",
+                "productStr": "DataTraveler 3.0",
+                "chip": "Phison PS2251-07"
+            }
+        },
+        "2": {
+            "portNumber": 2,
+            "busid": "1-2",
+            "mounted": false,
+            "mode": "image",
+            "target": "",
+            "sizeMB": 64,
+            "filesystem": "FAT16",
+            "scheme": "MBR",
+            "shadow_copy": true,
+            "write_protect": false,
+            "ram_disk": false,
+            "profile": {
+                "id": "sandisk",
+                "vendorName": "SanDisk Corp.",
+                "productName": "Ultra Luxe USB 3.1",
+                "vid": "0781",
+                "pid": "5583",
+                "rev": "0100",
+                "serial": "0401878D6B9F2910",
+                "vendorStr": "SanDisk",
+                "productStr": "Ultra Luxe",
+                "chip": "SMI SM3281AB"
+            }
+        },
+        "3": {
+            "portNumber": 3,
+            "busid": "1-3",
+            "mounted": false,
+            "mode": "image",
+            "target": "",
+            "sizeMB": 64,
+            "filesystem": "FAT16",
+            "scheme": "MBR",
+            "shadow_copy": true,
+            "write_protect": false,
+            "ram_disk": false,
+            "profile": {
+                "id": "samsung",
+                "vendorName": "Samsung Electronics",
+                "productName": "BAR Plus 3.1",
+                "vid": "04E8",
+                "pid": "7060",
+                "rev": "0200",
+                "serial": "0374820000000038",
+                "vendorStr": "Samsung",
+                "productStr": "Flash Drive FIT",
+                "chip": "Samsung V-NAND"
+            }
+        },
+        "4": {
+            "portNumber": 4,
+            "busid": "1-4",
+            "mounted": false,
+            "mode": "image",
+            "target": "",
+            "sizeMB": 64,
+            "filesystem": "FAT16",
+            "scheme": "MBR",
+            "shadow_copy": true,
+            "write_protect": false,
+            "ram_disk": false,
+            "profile": {
+                "id": "corsair",
+                "vendorName": "Corsair Memory",
+                "productName": "Voyager GTX",
+                "vid": "1B1C",
+                "pid": "1A09",
+                "rev": "0300",
+                "serial": "1730030000002194",
+                "vendorStr": "Corsair",
+                "productStr": "Voyager GTX",
+                "chip": "Phison PS3111"
+            }
+        }
+    }
+}

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>WIKMAZ IronUSB Immortal V25 - Full True USB Emulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #060911; color: #e2e8f0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .mono { font-family: 'Consolas', 'Courier New', monospace; font-variant-numeric: tabular-nums; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- LOCKED 2-TIER HEADER (NO JUMPING BUTTONS) -->
+    <header class="bg-slate-900/95 border-b border-slate-800 sticky top-0 z-40 shadow-xl">
+        <div class="max-w-7xl mx-auto px-6 py-2.5 flex items-center justify-between border-b border-slate-800/80 gap-4">
+            <div class="flex items-center gap-3 shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-emerald-500 flex items-center justify-center text-slate-950 font-extrabold mono text-sm shadow-md">WMZ</div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-base sm:text-lg font-extrabold text-white mono tracking-tight">WIKMAZ IronUSB Immortal</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700 mono font-bold">V25 GOLD</span>
+                    </div>
+                    <p data-i18n="subtitle" class="text-[11px] text-slate-400">4-Port Hardware-Level USB Bus Emulator for Windows · by Wikmaz.pl</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="https://suppi.pl/wikmaz" target="_blank" data-i18n="topSuppi" class="hidden md:inline-block px-2.5 py-1.5 text-[11px] font-extrabold rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 mono">☕ Support on Suppi.pl</a>
+                <a href="https://ko-fi.com/wikmaz" target="_blank" data-i18n="topKofi" class="hidden md:inline-block px-2.5 py-1.5 text-[11px] font-extrabold rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 mono">❤️ Support on Ko-fi</a>
+                <a href="https://wikmaz.pl" target="_blank" class="hidden lg:inline-block px-2.5 py-1.5 text-[11px] font-bold rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 mono">🌐 Wikmaz.pl</a>
+
+                <!-- LANGUAGE SWITCH PINNED TOP-RIGHT -->
+                <div class="flex items-center bg-slate-950 border border-amber-500/60 rounded-lg p-0.5">
+                    <button onclick="setLang('en')" id="lang-btn-en" class="px-2.5 py-1 text-xs font-extrabold mono rounded-md bg-amber-400 text-slate-950 cursor-pointer">🇬🇧 EN</button>
+                    <button onclick="setLang('pl')" id="lang-btn-pl" class="px-2.5 py-1 text-xs font-extrabold mono rounded-md text-slate-400 hover:text-white cursor-pointer">🇵🇱 PL</button>
+                </div>
+
+                <button onclick="openMountModal(1)" data-i18n="quickMount" class="px-3.5 py-1.5 text-xs font-extrabold mono rounded-lg bg-emerald-400 hover:bg-emerald-300 text-slate-950 shadow-md cursor-pointer whitespace-nowrap">⚡ Quick Mount</button>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 py-2">
+            <nav class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-1.5">
+                <button onclick="switchTab('ports')" data-i18n="navPorts" class="py-1.5 px-2 text-xs font-bold rounded-lg bg-slate-800 hover:bg-cyan-950 text-cyan-300 border border-slate-700 cursor-pointer truncate">🔌 4 USB Ports</button>
+                <button onclick="switchTab('forge')" data-i18n="navForge" class="py-1.5 px-2 text-xs font-bold rounded-lg bg-slate-800 hover:bg-cyan-950 text-cyan-300 border border-slate-700 cursor-pointer truncate">🛠️ Disk Forge & Size</button>
+                <button onclick="switchTab('spoof')" data-i18n="navSpoof" class="py-1.5 px-2 text-xs font-bold rounded-lg bg-slate-800 hover:bg-cyan-950 text-cyan-300 border border-slate-700 cursor-pointer truncate">🎭 VID/PID Spoofing</button>
+                <button onclick="switchTab('shadow')" data-i18n="navShadow" class="py-1.5 px-2 text-xs font-bold rounded-lg bg-slate-800 hover:bg-cyan-950 text-cyan-300 border border-slate-700 cursor-pointer truncate">🛡️ Shadow Copy</button>
+                <button onclick="switchTab('hacker')" data-i18n="navHacker" class="py-1.5 px-2 text-xs font-bold rounded-lg bg-slate-800 hover:bg-cyan-950 text-cyan-300 border border-slate-700 cursor-pointer truncate">🔥 Hacker Vision</button>
+                <button onclick="switchTab('settings')" data-i18n="navSettings" class="py-1.5 px-2 text-xs font-bold rounded-lg bg-slate-800 hover:bg-cyan-950 text-cyan-300 border border-slate-700 cursor-pointer truncate">⚙️ Options & JSON</button>
+                <button onclick="switchTab('docs')" data-i18n="navDocs" class="py-1.5 px-2 text-xs font-bold rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-700 cursor-pointer truncate">📖 Guide & Support</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+        <!-- TOP TELEMETRY -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                <span data-i18n="lblVhci" class="text-xs text-slate-400">VHCI Controller Status</span>
+                <div class="text-base font-bold text-emerald-400 mono mt-1">ONLINE · USB/IP 1.1.1</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                <span data-i18n="lblActivePorts" class="text-xs text-slate-400">Active USB Buses</span>
+                <div id="stat-mounted" class="text-base font-bold text-cyan-300 mono mt-1">0 / 4</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                <span data-i18n="lblThroughput" class="text-xs text-slate-400">Total SCSI Throughput (R/W)</span>
+                <div id="stat-rw" class="text-base font-bold text-white mono mt-1">0 KB / 0 KB</div>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900 border border-slate-800">
+                <span data-i18n="lblBusMode" class="text-xs text-slate-400">Windows Kernel Driver</span>
+                <div class="text-base font-bold text-amber-300 mono mt-1">USBSTOR.SYS (0x07)</div>
+            </div>
+        </div>
+
+        <!-- TAB 1: 4 USB PORTS -->
+        <div id="tab-ports" class="tab-panel active space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 data-i18n="titleHub" class="text-base font-bold text-white">🔌 Virtual USB 3.0 Root Hub (4 Independent Hardware Ports)</h2>
+                    <p data-i18n="descHub" class="text-xs text-slate-400">Each port operates on an isolated bus address (1-1 to 1-4) with its own image/V-FAT folder and VID/PID identity.</p>
+                </div>
+                <button onclick="unmountPort('ALL')" data-i18n="btnPanic" class="px-4 py-2 rounded-lg bg-rose-950 hover:bg-rose-900 text-rose-200 border border-rose-700 text-xs font-bold mono cursor-pointer">🚨 EMERGENCY DETACH ALL PORTS (PANIC UNMOUNT)</button>
+            </div>
+
+            <div id="ports-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+
+            <div class="p-5 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h3 data-i18n="titleLiveLog" class="text-xs font-bold text-slate-300 uppercase mono">📡 WIKMAZ VHCI Controller Event Log</h3>
+                <div id="live-status-box" class="p-3.5 rounded-lg bg-slate-950 border border-slate-800 mono text-xs text-emerald-400 h-40 overflow-y-auto space-y-1">
+                    <div>> WIKMAZ IronUSB Immortal V25 Gold Ready!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: DISK FORGE & CONVERTER -->
+        <div id="tab-forge" class="tab-panel space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4">
+                    <h2 data-i18n="titleForge" class="text-base font-bold text-white">🛠️ Disk Forge (Custom Size Input + Native Formatter)</h2>
+                    <p data-i18n="descForge" class="text-xs text-slate-400">Creates 100% pre-formatted, Windows Explorer readable disk images with a built-in README.TXT file.</p>
+                    <div>
+                        <label data-i18n="lblVolName" class="block text-xs text-slate-400 mb-1">Volume Label:</label>
+                        <input id="forge-name" type="text" value="WIKMAZ_USB" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-sm mono text-cyan-300">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label data-i18n="lblCustomSize" class="block text-xs text-amber-300 font-bold">Flash Drive Size in MB (Click a preset or type any custom size):</label>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button type="button" onclick="setForgeSize(32)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-xs mono font-bold cursor-pointer">32 MB</button>
+                            <button type="button" onclick="setForgeSize(64)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-xs mono font-bold cursor-pointer">64 MB</button>
+                            <button type="button" onclick="setForgeSize(128)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-xs mono font-bold cursor-pointer">128 MB</button>
+                            <button type="button" onclick="setForgeSize(256)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-xs mono font-bold cursor-pointer">256 MB</button>
+                            <button type="button" onclick="setForgeSize(512)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-xs mono font-bold cursor-pointer">512 MB</button>
+                            <button type="button" onclick="setForgeSize(1024)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-xs mono font-bold cursor-pointer">1 GB</button>
+                            <button type="button" onclick="setForgeSize(4096)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-xs mono font-bold cursor-pointer">4 GB</button>
+                            <button type="button" onclick="setForgeSize(8192)" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-xs mono font-bold cursor-pointer">8 GB</button>
+                        </div>
+                        <input id="forge-size" type="number" min="16" max="32768" value="64" class="w-full p-2.5 rounded-lg bg-slate-950 border border-cyan-500 text-sm mono text-white font-bold">
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3">
+                        <div>
+                            <label data-i18n="lblFileFmt" class="block text-xs text-slate-400 mb-1">Image Format:</label>
+                            <select id="forge-fmt" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-xs mono">
+                                <option value="img">IMG / RAW</option>
+                                <option value="vhd">VHD</option>
+                                <option value="vhdx">VHDX</option>
+                                <option value="iso">ISO</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label data-i18n="lblFs" class="block text-xs text-slate-400 mb-1">File System:</label>
+                            <select id="forge-fs" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-xs mono">
+                                <option value="fat16">FAT16/FAT32 (Native)</option>
+                                <option value="ntfs">NTFS (Diskpart)</option>
+                                <option value="exfat">exFAT (Diskpart)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label data-i18n="lblAssignPort" class="block text-xs text-slate-400 mb-1">Assign to Port:</label>
+                            <select id="forge-port" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-xs mono">
+                                <option value="1">Port #1</option>
+                                <option value="2">Port #2</option>
+                                <option value="3">Port #3</option>
+                                <option value="4">Port #4</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="forgeDisk()" data-i18n="btnForgeCreate" class="w-full py-3 rounded-lg bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-extrabold text-xs mono cursor-pointer">🔨 FORGE & FORMAT NEW DISK</button>
+                </div>
+
+                <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4">
+                    <h2 data-i18n="titleConv" class="text-base font-bold text-white">🔄 Universal Format Converter (IMG ↔ VHD ↔ VHDX ↔ ISO)</h2>
+                    <div>
+                        <label data-i18n="lblConvSrc" class="block text-xs text-slate-400 mb-1">Source image from images/ folder:</label>
+                        <select id="conv-src" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-xs mono"></select>
+                    </div>
+                    <div>
+                        <label data-i18n="lblConvDst" class="block text-xs text-slate-400 mb-1">Target format:</label>
+                        <select id="conv-dst" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-xs mono">
+                            <option value="img">IMG / RAW (Fastest LBA)</option>
+                            <option value="vhd">VHD (Virtual Hard Disk)</option>
+                            <option value="vhdx">VHDX (Hyper-V Modern)</option>
+                            <option value="iso">ISO (Optical Image)</option>
+                        </select>
+                    </div>
+                    <button onclick="convertDisk()" data-i18n="btnConvExec" class="w-full py-3 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-extrabold text-xs mono cursor-pointer">🔄 CONVERT IMAGE ON-THE-FLY</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: SPOOFING -->
+        <div id="tab-spoof" class="tab-panel space-y-4">
+            <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <h2 data-i18n="titleSpoof" class="text-base font-bold text-white">🎭 Hardware Spoofing Matrix (VID / PID / Serial / NAND Chip)</h2>
+                        <p data-i18n="descSpoof" class="text-xs text-slate-400">Select target port and click a manufacturer profile to spoof USB descriptors and SCSI INQUIRY strings.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span data-i18n="lblTargetPort" class="text-xs text-slate-400 mono">Target Port:</span>
+                        <select id="spoof-target-port" class="p-2 rounded-lg bg-slate-950 border border-slate-700 text-xs mono text-cyan-300">
+                            <option value="1">Port #1</option>
+                            <option value="2">Port #2</option>
+                            <option value="3">Port #3</option>
+                            <option value="4">Port #4</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="profiles-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- TAB 4: SHADOW COPY -->
+        <div id="tab-shadow" class="tab-panel space-y-4">
+            <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4">
+                <h2 data-i18n="titleShadow" class="text-base font-bold text-white">🛡️ Copy-on-Write Sandbox (Shadow Copy Vault) & ZIP Archives</h2>
+                <p data-i18n="descShadow" class="text-xs text-slate-400">When Shadow Copy is enabled on a port, all writes are redirected to RAM leaving the base image untouched.</p>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="clearDiff(1)" data-i18n="btnResetP1" class="px-3 py-2 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs mono cursor-pointer">🧹 Reset Delta Port #1</button>
+                    <button onclick="clearDiff(2)" data-i18n="btnResetP2" class="px-3 py-2 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs mono cursor-pointer">🧹 Reset Delta Port #2</button>
+                    <button onclick="clearDiff(3)" data-i18n="btnResetP3" class="px-3 py-2 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs mono cursor-pointer">🧹 Reset Delta Port #3</button>
+                    <button onclick="clearDiff(4)" data-i18n="btnResetP4" class="px-3 py-2 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs mono cursor-pointer">🧹 Reset Delta Port #4</button>
+                </div>
+                <div id="backups-list" class="p-4 rounded-lg bg-slate-950 border border-slate-800 mono text-xs text-amber-300 space-y-1"></div>
+            </div>
+        </div>
+
+        <!-- TAB 5: LIVE HACKER VISION -->
+        <div id="tab-hacker" class="tab-panel space-y-4">
+            <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h2 data-i18n="titleHacker" class="text-base font-bold text-white">🔥 Live Hacker Vision - Real-Time URB / SCSI CDB Packet Sniffer</h2>
+                    <button onclick="document.getElementById('hex-box').innerHTML=''" data-i18n="btnClearHex" class="px-3 py-1 rounded bg-slate-800 text-xs mono text-slate-300 cursor-pointer">Clear Console</button>
+                </div>
+                <div id="hex-box" class="p-4 rounded-lg bg-black border border-cyan-500/40 mono text-xs text-cyan-300 h-96 overflow-y-auto space-y-1"></div>
+            </div>
+        </div>
+
+        <!-- TAB 6: OPTIONAL ADD-ON MODULES & JSON CONFIG (CLEAN END-USER VIEW!) -->
+        <div id="tab-settings" class="tab-panel space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4">
+                    <h2 data-i18n="titleOpt" class="text-base font-bold text-white">🎛️ Optional Add-On Modules (Enable / Disable Anytime)</h2>
+                    <p data-i18n="descOpt" class="text-xs text-slate-400">None of the features below are forced. You have 100% control over how your emulator operates:</p>
+                    <div class="space-y-2.5 text-xs">
+                        <label class="flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer">
+                            <span data-i18n="optSound">🔊 USB Connect/Disconnect Sound Synthesizer (Web Audio)</span>
+                            <input type="checkbox" id="opt-sound" checked onchange="saveOptionalToggles()">
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer">
+                            <span data-i18n="optAutozip">📦 Automatic Shadow Copy Delta Backup to .ZIP on Unmount</span>
+                            <input type="checkbox" id="opt-autozip" checked onchange="saveOptionalToggles()">
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer">
+                            <span data-i18n="optAutorun">🚀 Inject AUTORUN.INF file into newly forged drives</span>
+                            <input type="checkbox" id="opt-autorun" checked onchange="saveOptionalToggles()">
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer">
+                            <span data-i18n="optLan">🌐 LAN / Proxmox Network Export Mode (Listen on 0.0.0.0:3240)</span>
+                            <input type="checkbox" id="opt-lan" onchange="saveOptionalToggles()">
+                        </label>
+                        <label class="flex items-center justify-between p-3 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer">
+                            <span data-i18n="optAutostart">🖥️ Start automatically with Windows (Startup folder entry)</span>
+                            <input type="checkbox" id="opt-autostart" onchange="saveOptionalToggles()">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4">
+                    <h2 data-i18n="titleJson" class="text-base font-bold text-white">⚙️ Full System JSON Configuration Editor (Save / Export / Import)</h2>
+                    <textarea id="json-editor" class="w-full h-64 p-3 rounded-lg bg-slate-950 border border-slate-700 mono text-xs text-emerald-300"></textarea>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="saveJsonConfig()" data-i18n="btnSaveJson" class="px-4 py-2 rounded-lg bg-emerald-400 text-slate-950 font-bold text-xs mono cursor-pointer">💾 Save JSON</button>
+                        <button onclick="exportJsonFile()" data-i18n="btnExportJson" class="px-4 py-2 rounded-lg bg-slate-800 text-cyan-300 border border-slate-700 font-bold text-xs mono cursor-pointer">📥 Export .JSON</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 7: GUIDE & SUPPORT -->
+        <div id="tab-docs" class="tab-panel space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <div id="docs-content-en" class="lg:col-span-8 p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4 text-xs leading-relaxed">
+                    <h2 class="text-base font-bold text-white">📖 Complete User Guide (Step-by-Step) & How It Works</h2>
+                    <div class="p-4 rounded-lg bg-slate-950 border border-cyan-500/40 space-y-2">
+                        <div class="font-bold text-cyan-300 text-sm">👶 Simple Explanation (ELI10 – Anyone Can Understand!):</div>
+                        <p class="text-slate-300">Imagine you need a physical USB flash drive, but you don't have one plugged in. This program takes a regular file or folder on your PC and convinces Windows that you just plugged a real hardware thumb drive (like a Kingston or SanDisk) into a physical USB port! Windows plays the hardware connect sound, opens a new drive letter (e.g., <b>D:</b>), and lets you use it like a real USB stick.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-2">
+                        <div class="font-bold text-emerald-300 text-sm">🚀 Step-by-Step Guide (What to Click?):</div>
+                        <ol class="list-decimal pl-5 space-y-1.5 text-slate-300">
+                            <li><b>STEP 1 (Quick Start):</b> Click the green <b>"⚡ Quick Mount"</b> button in the top-right corner.</li>
+                            <li><b>STEP 2 (Choose Source & Size):</b> Select a Virtual Port (#1 to #4), pick an image file or local folder (V-FAT), and type any custom size in MB.</li>
+                            <li><b>STEP 3 (Plug It In):</b> Click <b>"🔌 INITIALIZE USB HOT-PLUG"</b>. Within 2 seconds, your new USB drive appears in Windows File Explorer!</li>
+                            <li><b>STEP 4 (Create Custom Drives):</b> Open <b>"🛠️ Disk Forge & Size"</b> to type any custom size in MB and forge a pre-formatted FAT16/NTFS drive.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div id="docs-content-pl" class="lg:col-span-8 p-6 rounded-xl bg-slate-900 border border-slate-800 space-y-4 text-xs leading-relaxed hidden">
+                    <h2 class="text-base font-bold text-white">📖 Instrukcja Obsługi „Po Ludzku” (Krok po Kroku) & Zasada Działania</h2>
+                    <div class="p-4 rounded-lg bg-slate-950 border border-cyan-500/40 space-y-2">
+                        <div class="font-bold text-cyan-300 text-sm">👶 Wyjaśnienie w 3 zdaniach (Zrozumie nawet 10-latka!):</div>
+                        <p class="text-slate-300">Wyobraź sobie, że potrzebujesz pendrive'a, ale nie masz go w kieszeni. Ten program bierze zwykły plik lub folder z Twojego komputera i „udaje” przed Windowsem, że właśnie włożyłeś prawdziwego pendrive'a ze sklepu (np. firmy Kingston lub SanDisk) do gniazda USB! Komputer wydaje dźwięk podłączenia, pokazuje nowy dysk (np. <b>D:</b>), a Ty możesz wrzucać na niego pliki, gry i programy.</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-slate-950 border border-slate-800 space-y-2">
+                        <div class="font-bold text-emerald-300 text-sm">🚀 Instrukcja Krok po Kroku (Co kliknąć, żeby działało?):</div>
+                        <ol class="list-decimal pl-5 space-y-1.5 text-slate-300">
+                            <li><b>KROK 1 (Szybki Start):</b> Kliknij zielony przycisk <b>„⚡ Szybkie Montowanie”</b> w prawym górnym rogu ekranu.</li>
+                            <li><b>KROK 2 (Wybór tego, co montujemy):</b> Wybierz Port (od #1 do #4), wybierz gotowy plik dysku z listy (lub wskaż własny folder z komputera) i wpisz dowolny rozmiar w MB.</li>
+                            <li><b>KROK 3 (Podłączenie):</b> Kliknij <b>„🔌 ZAINICJUJ HOT-PLUG USB”</b>. Po 2 sekundach w Eksploratorze Windows pojawi się Twój nowy pendrive!</li>
+                            <li><b>KROK 4 (Tworzenie nowych dysków):</b> W zakładce <b>„🛠️ Kuźnia & Rozmiar”</b> możesz wpisać z palca dowolny rozmiar (np. 500 MB) i wykuć zupełnie nowy, sformatowany dysk.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-4 p-6 rounded-xl bg-gradient-to-b from-slate-900 to-slate-950 border border-cyan-500/40 space-y-4">
+                    <h2 data-i18n="supportTitle" class="text-base font-bold text-white">❤️ Support the Author / Creator Hub</h2>
+                    <p data-i18n="supportDesc" class="text-xs text-slate-300">WIKMAZ IronUSB Immortal is engineered by Michał Słowiński (WIKMAZ). If this tool helps your workflow, support future development:</p>
+                    <div class="space-y-2.5 pt-2">
+                        <a href="https://suppi.pl/wikmaz" target="_blank" data-i18n="btnSuppiBig" class="block w-full py-3 px-4 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold text-xs text-center mono shadow-lg">☕ Buy Me a Coffee on SUPPI.PL/WIKMAZ</a>
+                        <a href="https://ko-fi.com/wikmaz" target="_blank" data-i18n="btnKofiBig" class="block w-full py-3 px-4 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-extrabold text-xs text-center mono shadow-lg">❤️ Donate via KO-FI.COM/WIKMAZ</a>
+                        <a href="https://wikmaz.pl" target="_blank" data-i18n="btnWebBig" class="block w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs text-center mono border border-slate-700">🌐 Visit Official Website WIKMAZ.PL</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- QUICK MOUNT MODAL -->
+    <div id="mount-modal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-cyan-500/50 rounded-2xl max-w-2xl w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 data-i18n="modalTitle" class="text-sm font-bold text-white mono">⚡ Configure & Mount Virtual USB Port (Hot-Plug)</h3>
+                <button onclick="closeMountModal()" class="text-slate-400 hover:text-white text-lg font-bold cursor-pointer">✕</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                <div>
+                    <label data-i18n="mPortLbl" class="block text-slate-400 mb-1">Target Hub Port:</label>
+                    <select id="m-port" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-cyan-300 mono font-bold">
+                        <option value="1">Port #1 (busid 1-1)</option>
+                        <option value="2">Port #2 (busid 1-2)</option>
+                        <option value="3">Port #3 (busid 1-3)</option>
+                        <option value="4">Port #4 (busid 1-4)</option>
+                    </select>
+                </div>
+                <div>
+                    <label data-i18n="mModeLbl" class="block text-slate-400 mb-1">Data Source Mode:</label>
+                    <select id="m-mode" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white mono">
+                        <option value="image">Image (.IMG/.VHD/.VHDX/.ISO)</option>
+                        <option value="folder">Local Folder (V-FAT)</option>
+                    </select>
+                </div>
+                <div>
+                    <label data-i18n="mSizeLbl" class="block text-amber-300 font-bold mb-1">Custom Size (MB):</label>
+                    <input id="m-size" type="number" min="16" max="32768" value="64" class="w-full p-2.5 rounded-lg bg-slate-950 border border-cyan-500 text-white mono font-bold">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div>
+                    <label data-i18n="mImgListLbl" class="block text-slate-400 mb-1">Select existing image from images/:</label>
+                    <select id="m-img-list" onchange="if(this.value) document.getElementById('m-target').value = this.value" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-slate-200 mono"></select>
+                </div>
+                <div>
+                    <label data-i18n="mProfLbl" class="block text-slate-400 mb-1">Hardware Profile (Spoofing):</label>
+                    <select id="m-profile" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-amber-300 mono"></select>
+                </div>
+            </div>
+
+            <div class="text-xs">
+                <label data-i18n="mTargetLbl" class="block text-slate-400 mb-1">Full path to disk image or local folder:</label>
+                <input id="m-target" type="text" class="w-full p-2.5 rounded-lg bg-slate-950 border border-slate-700 text-white mono" placeholder="WIKMAZ_DISK_64MB.img or C:\MyFolder">
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 text-xs">
+                <div>
+                    <label data-i18n="mVidLbl" class="block text-slate-400 mb-1">Custom VID (Optional):</label>
+                    <input id="m-vid" type="text" placeholder="0951" class="w-full p-2 rounded bg-slate-950 border border-slate-800 mono text-cyan-300">
+                </div>
+                <div>
+                    <label data-i18n="mPidLbl" class="block text-slate-400 mb-1">Custom PID (Optional):</label>
+                    <input id="m-pid" type="text" placeholder="1666" class="w-full p-2 rounded bg-slate-950 border border-slate-800 mono text-cyan-300">
+                </div>
+                <div>
+                    <label data-i18n="mSerialLbl" class="block text-slate-400 mb-1">Custom Serial (Optional):</label>
+                    <input id="m-serial" type="text" placeholder="WIKMAZ001" class="w-full p-2 rounded bg-slate-950 border border-slate-800 mono text-cyan-300">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+                <label class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer">
+                    <input id="m-shadow" type="checkbox">
+                    <span data-i18n="mShadowChk">🛡️ Shadow Copy (CoW)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer">
+                    <input id="m-wp" type="checkbox">
+                    <span data-i18n="mWpChk">🔒 Write-Protect (WP)</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 rounded-lg bg-slate-950 border border-slate-800 cursor-pointer">
+                    <input id="m-ram" type="checkbox">
+                    <span data-i18n="mRamChk">⚡ Ultra RAM-Disk Mode</span>
+                </label>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-slate-800">
+                <button onclick="closeMountModal()" data-i18n="btnCancel" class="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 text-xs font-bold mono cursor-pointer">Cancel</button>
+                <button onclick="confirmModalMount()" data-i18n="btnConfirmMount" class="px-5 py-2 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 text-xs font-extrabold mono cursor-pointer">🔌 INITIALIZE USB HOT-PLUG</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-t border-slate-900 bg-slate-950 px-6 py-3 text-center text-xs text-slate-500 mono">
+        WIKMAZ IronUSB Immortal V25 Gold · Created by Michał Słowiński (<a href="https://wikmaz.pl" target="_blank" class="text-cyan-400">wikmaz.pl</a>) · Support: <a href="https://suppi.pl/wikmaz" target="_blank" class="text-amber-400">suppi.pl/wikmaz</a> | <a href="https://ko-fi.com/wikmaz" target="_blank" class="text-cyan-400">ko-fi.com/wikmaz</a>
+    </footer>
+
+    <script>
+        let appState = {};
+        let currentLang = 'en';
+        let isInit = false;
+
+        const I18N = {
+            en: {
+                subtitle: "4-Port Hardware-Level USB Bus Emulator for Windows · by Wikmaz.pl",
+                topSuppi: "☕ Support on Suppi.pl", topKofi: "❤️ Support on Ko-fi", quickMount: "⚡ Quick Mount",
+                navPorts: "🔌 4 USB Ports", navForge: "🛠️ Disk Forge & Size", navSpoof: "🎭 VID/PID Spoofing",
+                navShadow: "🛡️ Shadow Copy", navHacker: "🔥 Hacker Vision", navSettings: "⚙️ Options & JSON", navDocs: "📖 Guide & Support",
+                lblVhci: "VHCI Controller Status", lblActivePorts: "Active USB Buses", lblThroughput: "Total SCSI Throughput (R/W)", lblBusMode: "Windows Kernel Driver",
+                titleHub: "🔌 Virtual USB 3.0 Root Hub (4 Independent Hardware Ports)",
+                descHub: "Each port operates on an isolated bus address (1-1 to 1-4) with its own image/V-FAT folder and VID/PID identity.",
+                btnPanic: "🚨 EMERGENCY DETACH ALL PORTS (PANIC UNMOUNT)", titleLiveLog: "📡 WIKMAZ VHCI Controller Event Log",
+                titleForge: "🛠️ Disk Forge (Custom Size Input + Native Formatter)",
+                descForge: "Creates 100% pre-formatted, Windows Explorer readable disk images with a built-in README.TXT file.",
+                lblVolName: "Volume Label:", lblCustomSize: "Flash Drive Size in MB (Click a preset or type any custom size):",
+                lblFileFmt: "Image Format:", lblFs: "File System:", lblAssignPort: "Assign to Port:",
+                btnForgeCreate: "🔨 FORGE & FORMAT NEW DISK", titleConv: "🔄 Universal Format Converter (IMG ↔ VHD ↔ VHDX ↔ ISO)",
+                lblConvSrc: "Source image from images/ folder:", lblConvDst: "Target format:", btnConvExec: "🔄 CONVERT IMAGE ON-THE-FLY",
+                titleSpoof: "🎭 Hardware Spoofing Matrix (VID / PID / Serial / NAND Chip)",
+                descSpoof: "Select target port and click a manufacturer profile to spoof USB descriptors and SCSI INQUIRY strings.",
+                lblTargetPort: "Target Port:", btnApplySpoof: "Apply to Selected Port",
+                titleShadow: "🛡️ Copy-on-Write Sandbox (Shadow Copy Vault) & ZIP Archives",
+                descShadow: "When Shadow Copy is enabled on a port, all writes are redirected to RAM leaving the base image untouched.",
+                btnResetP1: "🧹 Reset Delta Port #1", btnResetP2: "🧹 Reset Delta Port #2", btnResetP3: "🧹 Reset Delta Port #3", btnResetP4: "🧹 Reset Delta Port #4",
+                titleHacker: "🔥 Live Hacker Vision - Real-Time URB / SCSI CDB Packet Sniffer", btnClearHex: "Clear Console",
+                titleOpt: "🎛️ Optional Add-On Modules (Enable / Disable Anytime)",
+                descOpt: "None of the features below are forced. You have 100% control over how your emulator operates:",
+                optSound: "🔊 USB Connect/Disconnect Sound Synthesizer (Web Audio)",
+                optAutozip: "📦 Automatic Shadow Copy Delta Backup to .ZIP on Unmount",
+                optAutorun: "🚀 Inject AUTORUN.INF file into newly forged drives",
+                optLan: "🌐 LAN / Proxmox Network Export Mode (Listen on 0.0.0.0:3240)",
+                optAutostart: "🖥️ Start automatically with Windows (Startup folder entry)",
+                titleJson: "⚙️ Full System JSON Configuration Editor (Save / Export / Import)", btnSaveJson: "💾 Save JSON", btnExportJson: "📥 Export .JSON",
+                supportTitle: "❤️ Support the Author / Creator Hub",
+                supportDesc: "WIKMAZ IronUSB Immortal is engineered by Michał Słowiński (WIKMAZ). If this tool helps your workflow, support future development:",
+                btnSuppiBig: "☕ Buy Me a Coffee on SUPPI.PL/WIKMAZ", btnKofiBig: "❤️ Donate via KO-FI.COM/WIKMAZ", btnWebBig: "🌐 Visit Official Website WIKMAZ.PL",
+                modalTitle: "⚡ Configure & Mount Virtual USB Port (Hot-Plug)", mPortLbl: "Target Hub Port:", mModeLbl: "Data Source Mode:",
+                mSizeLbl: "Custom Size (MB):", mImgListLbl: "Select existing image from images/:", mProfLbl: "Hardware Profile (Spoofing):",
+                mTargetLbl: "Full path to disk image or local folder:", mVidLbl: "Custom VID (Optional):", mPidLbl: "Custom PID (Optional):",
+                mSerialLbl: "Custom Serial (Optional):", mShadowChk: "🛡️ Shadow Copy (CoW)", mWpChk: "🔒 Write-Protect (WP)", mRamChk: "⚡ Ultra RAM-Disk Mode",
+                btnCancel: "Cancel", btnConfirmMount: "🔌 INITIALIZE USB HOT-PLUG",
+                connected: "MOUNTED", empty: "EMPTY SLOT", btnConfigMount: "⚡ Configure & Mount", btnUnmount: "❌ Unmount (Eject)",
+                lblSource: "Source:", lblMode: "Mode:", lblSizeCard: "Size:", noZip: "No ZIP archives yet."
+            },
+            pl: {
+                subtitle: "4-Portowy Emulator Magistrali Sprzętowej USB dla Windows · by Wikmaz.pl",
+                topSuppi: "☕ Wesprzyj Suppi.pl", topKofi: "❤️ Wesprzyj Ko-fi", quickMount: "⚡ Szybkie Montowanie",
+                navPorts: "🔌 4 Porty USB", navForge: "🛠️ Kuźnia & Rozmiar", navSpoof: "🎭 Klonowanie VID/PID",
+                navShadow: "🛡️ Shadow Copy", navHacker: "🔥 Hacker Vision", navSettings: "⚙️ Opcje & JSON", navDocs: "📖 Instrukcja & Support",
+                lblVhci: "Stan Kontrolera VHCI", lblActivePorts: "Aktywne Magistrale USB", lblThroughput: "Całkowity Transfer SCSI (R/W)", lblBusMode: "Sterownik Jądra Windows",
+                titleHub: "🔌 Wirtualny Hub USB 3.0 Root Hub (4 Niezależne Porty Sprzętowe)",
+                descHub: "Każdy port posiada własny adres szyny (1-1 do 1-4), własny obraz/folder V-FAT i niezależny profil VID/PID.",
+                btnPanic: "🚨 AWARYJNE ODŁĄCZENIE WSZYSTKICH (PANIC UNMOUNT)", titleLiveLog: "📡 Dziennik Zdarzeń Kontrolera WIKMAZ VHCI",
+                titleForge: "🛠️ Kuźnia Dysków (Dowolny Rozmiar z Palca + Natywny Formatter)",
+                descForge: "Tworzy w 100% sformatowane, czytelne w Eksploratorze Windows obrazy wraz z plikiem README.TXT.",
+                lblVolName: "Etykieta Woluminu (Volume Label):", lblCustomSize: "Rozmiar Pendrive'a w MB (Wybierz preset lub wpisz dowolną wartość z palca):",
+                lblFileFmt: "Format Pliku:", lblFs: "System Plików:", lblAssignPort: "Przypisz do Portu:",
+                btnForgeCreate: "🔨 WYKUJ I SFORMATUJ NOWY DYSK", titleConv: "🔄 Uniwersalny Konwerter Formatów (IMG ↔ VHD ↔ VHDX ↔ ISO)",
+                lblConvSrc: "Obraz źródłowy z katalogu images/:", lblConvDst: "Format docelowy:", btnConvExec: "🔄 KONWERTUJ OBRAZ W LOCIE",
+                titleSpoof: "🎭 Matryca Klonowania Sprzętu (VID / PID / Serial / Chipset NAND)",
+                descSpoof: "Wybierz docelowy port i kliknij profil producenta, aby podmienić deskryptor USB i odpowiedź SCSI INQUIRY.",
+                lblTargetPort: "Docelowy Port:", btnApplySpoof: "Zastosuj na wybranym porcie",
+                titleShadow: "🛡️ Piaskownica Copy-on-Write (Shadow Copy Vault) & Archiwa ZIP",
+                descShadow: "Gdy opcja Shadow Copy jest włączona na danym porcie, wszystkie zapisy trafiają do bufora RAM i nie modyfikują oryginalnego pliku dysku.",
+                btnResetP1: "🧹 Reset Delty Port #1", btnResetP2: "🧹 Reset Delty Port #2", btnResetP3: "🧹 Reset Delty Port #3", btnResetP4: "🧹 Reset Delty Port #4",
+                titleHacker: "🔥 Live Hacker Vision - Analizator Pakietów URB / SCSI CDB w Czasie Rzeczywistym", btnClearHex: "Wyczyść Okno",
+                titleOpt: "🎛️ Opcjonalne Moduły Dodatkowe (Włącz / Wyłącz w dowolnej chwili)",
+                descOpt: "Żadna z poniższych funkcji nie jest wymuszona. Sam decydujesz, jak działa Twój emulator:",
+                optSound: "🔊 Syntezator Dźwięków Wpinania/Wypinania USB (Web Audio)",
+                optAutozip: "📦 Automatyczny Backup zmian Shadow Copy do .ZIP przy odmontowaniu",
+                optAutorun: "🚀 Wstrzykiwanie pliku AUTORUN.INF do nowo wykuwanych dysków",
+                optLan: "🌐 Tryb Eksportu Sieciowego LAN / Proxmox (Nasłuch 0.0.0.0:3240)",
+                optAutostart: "🖥️ Autostart z systemem Windows (Wpis w folderze Startup)",
+                titleJson: "⚙️ Pełny Edytor Konfiguracji JSON (Zapis / Eksport / Import)", btnSaveJson: "💾 Zapisz JSON", btnExportJson: "📥 Eksportuj .JSON",
+                supportTitle: "❤️ Wsparcie Autora / Support Author",
+                supportDesc: "Projekt WIKMAZ IronUSB Immortal został stworzony przez Michała Słowińskiego (WIKMAZ). Jeśli narzędzie pomaga Ci w pracy, wesprzyj rozwój projektu:",
+                btnSuppiBig: "☕ Postaw Kawę na SUPPI.PL/WIKMAZ", btnKofiBig: "❤️ Wesprzyj na KO-FI.COM/WIKMAZ", btnWebBig: "🌐 Odwiedź Oficjalną Stronę WIKMAZ.PL",
+                modalTitle: "⚡ Konfiguracja i Montowanie Portu USB (Hot-Plug)", mPortLbl: "Docelowy Port Huba:", mModeLbl: "Typ Źródła Danych:",
+                mSizeLbl: "Rozmiar z palca (MB):", mImgListLbl: "Wybierz gotowy obraz z folderu images/:", mProfLbl: "Profil Sprzętowy (Hardware Spoofing):",
+                mTargetLbl: "Pełna ścieżka do obrazu lub folderu na dysku:", mVidLbl: "Własny VID (Opcjonalnie):", mPidLbl: "Własny PID (Opcjonalnie):",
+                mSerialLbl: "Własny Serial (Opcjonalnie):", mShadowChk: "🛡️ Shadow Copy (CoW)", mWpChk: "🔒 Blokada Zapisu (WP)", mRamChk: "⚡ Tryb Ultra RAM-Disk",
+                btnCancel: "Anuluj", btnConfirmMount: "🔌 ZAINICJUJ HOT-PLUG USB",
+                connected: "PODŁĄCZONY", empty: "WOLNY PORT", btnConfigMount: "⚡ Konfiguruj i Podłącz", btnUnmount: "❌ Odmontuj (Eject)",
+                lblSource: "Źródło:", lblMode: "Tryb:", lblSizeCard: "Rozmiar:", noZip: "Brak archiwów ZIP."
+            }
+        };
+
+        function setForgeSize(mb) { document.getElementById('forge-size').value = mb; }
+
+        function playUsbSound(connect = true) {
+            if (!document.getElementById('opt-sound')?.checked) return;
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.frequency.setValueAtTime(connect ? 587.33 : 783.99, ctx.currentTime);
+                osc.frequency.setValueAtTime(connect ? 880.0 : 523.25, ctx.currentTime + 0.11);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.start(); osc.stop(ctx.currentTime + 0.3);
+            } catch (e) {}
+        }
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.getElementById('lang-btn-en').className = lang === 'en'
+                ? 'px-2.5 py-1 text-xs font-extrabold mono rounded-md bg-amber-400 text-slate-950 cursor-pointer'
+                : 'px-2.5 py-1 text-xs font-extrabold mono rounded-md text-slate-400 hover:text-white cursor-pointer';
+            document.getElementById('lang-btn-pl').className = lang === 'pl'
+                ? 'px-2.5 py-1 text-xs font-extrabold mono rounded-md bg-amber-400 text-slate-950 cursor-pointer'
+                : 'px-2.5 py-1 text-xs font-extrabold mono rounded-md text-slate-400 hover:text-white cursor-pointer';
+
+            const dict = I18N[lang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const k = el.getAttribute('data-i18n');
+                if (dict[k]) el.innerText = dict[k];
+            });
+
+            document.getElementById('docs-content-en').classList.toggle('hidden', lang !== 'en');
+            document.getElementById('docs-content-pl').classList.toggle('hidden', lang !== 'pl');
+            refreshState(true);
+        }
+
+        function switchTab(id) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
+        }
+
+        function appendBounded(containerId, text) {
+            const box = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.textContent = text;
+            box.appendChild(div);
+            while (box.childNodes.length > 60) box.removeChild(box.firstChild);
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function openMountModal(portNum) {
+            const modal = document.getElementById('mount-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.getElementById('m-port').value = String(portNum);
+            const pCfg = appState.config?.ports?.[String(portNum)];
+            if (pCfg) {
+                document.getElementById('m-mode').value = pCfg.mode || 'image';
+                document.getElementById('m-size').value = pCfg.sizeMB || 64;
+                document.getElementById('m-target').value = pCfg.target || '';
+                document.getElementById('m-shadow').checked = !!pCfg.shadow_copy;
+                document.getElementById('m-wp').checked = !!pCfg.write_protect;
+                document.getElementById('m-ram').checked = !!pCfg.ram_disk;
+                if (pCfg.profile?.id) document.getElementById('m-profile').value = pCfg.profile.id;
+            }
+        }
+
+        function closeMountModal() {
+            const modal = document.getElementById('mount-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function confirmModalMount() {
+            const pNum = document.getElementById('m-port').value;
+            playUsbSound(true);
+            await fetch('/api/mount', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    portNumber: pNum,
+                    mode: document.getElementById('m-mode').value,
+                    sizeMB: document.getElementById('m-size').value,
+                    target: document.getElementById('m-target').value,
+                    profile_id: document.getElementById('m-profile').value,
+                    custom_vid: document.getElementById('m-vid').value,
+                    custom_pid: document.getElementById('m-pid').value,
+                    custom_serial: document.getElementById('m-serial').value,
+                    shadow_copy: document.getElementById('m-shadow').checked,
+                    write_protect: document.getElementById('m-wp').checked,
+                    ram_disk: document.getElementById('m-ram').checked
+                })
+            });
+            closeMountModal();
+            refreshState(true);
+        }
+
+        async function unmountPort(portNum) {
+            playUsbSound(false);
+            await fetch('/api/unmount', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({portNumber: portNum})
+            });
+            refreshState(true);
+        }
+
+        async function refreshState(fullReload = false) {
+            try {
+                const res = await fetch('/api/state');
+                appState = await res.json();
+                const cfg = appState.config;
+                const t = I18N[currentLang];
+
+                let mountedCnt = 0, totalR = 0, totalW = 0;
+                for (let k of ["1", "2", "3", "4"]) {
+                    if (cfg.ports[k].mounted) mountedCnt++;
+                    totalR += appState.port_stats[k].read_bytes;
+                    totalW += appState.port_stats[k].write_bytes;
+                }
+                document.getElementById('stat-mounted').innerText = `${mountedCnt} / 4`;
+                document.getElementById('stat-rw').innerText = `${Math.round(totalR/1024)} KB / ${Math.round(totalW/1024)} KB`;
+
+                if (!isInit || fullReload) {
+                    isInit = true;
+                    document.getElementById('json-editor').value = JSON.stringify(cfg, null, 4);
+                    document.getElementById('opt-sound').checked = !!cfg.options?.sound_effects;
+                    document.getElementById('opt-autozip').checked = !!cfg.options?.auto_backup_zip;
+                    document.getElementById('opt-autorun').checked = !!cfg.options?.autorun_inf_inject;
+                    document.getElementById('opt-lan').checked = !!cfg.options?.lan_export_mode;
+                    document.getElementById('opt-autostart').checked = !!cfg.options?.windows_autostart;
+
+                    const imgOpts = appState.images.map(i => `<option value="${i}">${i}</option>`).join('');
+                    document.getElementById('m-img-list').innerHTML = `<option value="">-- ${currentLang==='pl'?'Wybierz obraz z images/':'Select image from images/'} --</option>` + imgOpts;
+                    document.getElementById('conv-src').innerHTML = imgOpts;
+                    document.getElementById('m-profile').innerHTML = appState.profiles.map(p => `<option value="${p.id}">${p.vendorName} - ${p.productName} [${p.vid}:${p.pid}]</option>`).join('');
+
+                    let cardsHtml = '';
+                    for (let k of ["1", "2", "3", "4"]) {
+                        const p = cfg.ports[k];
+                        const st = appState.port_stats[k];
+                        const prof = p.profile || {};
+                        const diffCnt = appState.diff_summary[k] || 0;
+                        const badgeClass = p.mounted ? 'bg-emerald-950 text-emerald-300 border-emerald-700' : 'bg-slate-800 text-slate-400 border-slate-700';
+                        cardsHtml += `
+                            <div class="p-5 rounded-2xl bg-slate-900 border ${p.mounted ? 'border-cyan-500/60 shadow-lg shadow-cyan-500/10' : 'border-slate-800'} space-y-3">
+                                <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+                                    <div class="flex items-center gap-2.5">
+                                        <span class="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-500/40 flex items-center justify-center font-bold mono text-xs text-cyan-300">P${k}</span>
+                                        <div>
+                                            <div class="text-xs font-bold text-white mono">Port #${k} (busid 1-${k})</div>
+                                            <div class="text-[11px] text-slate-400 mono">${prof.vendorName || 'Kingston'} · ${prof.productName || 'DataTraveler'}</div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[10px] px-2 py-0.5 rounded border font-bold mono ${badgeClass}">${p.mounted ? t.connected : t.empty}</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 text-xs mono bg-slate-950 p-3 rounded-xl border border-slate-800">
+                                    <div><span class="text-slate-500">VID:PID:</span> <span class="text-cyan-300 font-bold">0x${prof.vid}:0x${prof.pid}</span></div>
+                                    <div><span class="text-slate-500">${t.lblSizeCard}</span> <span class="text-white font-bold">${p.sizeMB || 64} MB</span></div>
+                                    <div class="col-span-2 truncate"><span class="text-slate-500">${t.lblSource}</span> <span class="text-emerald-300">${p.target || 'WIKMAZ_DISK_64MB.img'}</span></div>
+                                    <div><span class="text-slate-500">${t.lblMode}</span> <span class="text-amber-300">${p.ram_disk ? 'RAM-DISK' : (p.shadow_copy ? 'Shadow CoW ('+diffCnt+')' : 'Direct R/W')}</span></div>
+                                    <div><span class="text-slate-500">I/O:</span> <span class="text-white">${Math.round((st.read_bytes+st.write_bytes)/1024)} KB</span></div>
+                                </div>
+                                <div class="flex flex-wrap gap-2 pt-1">
+                                    <button onclick="openMountModal(${k})" class="flex-1 py-2 px-3 rounded-lg bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-extrabold text-xs mono cursor-pointer">${t.btnConfigMount}</button>
+                                    ${p.mounted ? `<button onclick="unmountPort(${k})" class="py-2 px-3 rounded-lg bg-rose-950 hover:bg-rose-900 text-rose-200 border border-rose-700 font-bold text-xs mono cursor-pointer">${t.btnUnmount}</button>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    document.getElementById('ports-grid').innerHTML = cardsHtml;
+
+                    document.getElementById('profiles-grid').innerHTML = appState.profiles.map(p => `
+                        <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                            <div class="text-sm font-bold text-white">${p.vendorName}</div>
+                            <div class="text-xs text-slate-400">${p.productName}</div>
+                            <div class="text-xs mono text-cyan-400">VID: 0x${p.vid} | PID: 0x${p.pid}</div>
+                            <div class="text-[11px] mono text-amber-300">Chip: ${p.chip || 'NAND Controller'}</div>
+                            <button onclick="applySpoofProfile('${p.id}')" class="w-full py-1.5 rounded bg-slate-800 hover:bg-cyan-400 hover:text-slate-950 text-xs font-bold mono transition cursor-pointer">${t.btnApplySpoof}</button>
+                        </div>
+                    `).join('');
+
+                    document.getElementById('backups-list').innerHTML = appState.backups.length ? appState.backups.map(b => `<div>📦 ${b}</div>`).join('') : `<div>${t.noZip}</div>`;
+                }
+            } catch (e) {}
+        }
+
+        async function forgeDisk() {
+            await fetch('/api/forge/create', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('forge-name').value,
+                    format: document.getElementById('forge-fmt').value,
+                    sizeMB: document.getElementById('forge-size').value,
+                    filesystem: document.getElementById('forge-fs').value,
+                    mountPort: document.getElementById('forge-port').value
+                })
+            });
+            refreshState(true);
+        }
+
+        async function convertDisk() {
+            await fetch('/api/convert', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    source: document.getElementById('conv-src').value,
+                    target_format: document.getElementById('conv-dst').value
+                })
+            });
+            refreshState(true);
+        }
+
+        async function applySpoofProfile(profId) {
+            const pNum = document.getElementById('spoof-target-port').value;
+            await fetch('/api/mount', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({portNumber: pNum, profile_id: profId})
+            });
+            refreshState(true);
+        }
+
+        async function clearDiff(portNum) {
+            await fetch('/api/clear_diff', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({portNumber: portNum})});
+            refreshState(true);
+        }
+
+        async function saveOptionalToggles() {
+            const cfg = appState.config;
+            cfg.options.sound_effects = document.getElementById('opt-sound').checked;
+            cfg.options.auto_backup_zip = document.getElementById('opt-autozip').checked;
+            cfg.options.autorun_inf_inject = document.getElementById('opt-autorun').checked;
+            cfg.options.lan_export_mode = document.getElementById('opt-lan').checked;
+            cfg.options.windows_autostart = document.getElementById('opt-autostart').checked;
+            await fetch('/api/config', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(cfg)});
+            refreshState(true);
+        }
+
+        async function saveJsonConfig() {
+            await fetch('/api/config', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: document.getElementById('json-editor').value});
+            refreshState(true);
+        }
+
+        function exportJsonFile() {
+            const blob = new Blob([document.getElementById('json-editor').value], {type: 'application/json'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'WIKMAZ_IronUSB_Config_V25.json'; a.click();
+        }
+
+        const evt = new EventSource('/stream');
+        evt.onmessage = (e) => {
+            const d = JSON.parse(e.data);
+            if (d.type === 'HEX') {
+                appendBounded('hex-box', `[${d.time}] ${d.msg}`);
+            } else {
+                appendBounded('live-status-box', `[${d.time}] ${d.msg}`);
+            }
+        };
+
+        refreshState(true);
+        setInterval(() => refreshState(false), 2000);
+    </script>
+</body>
+</html>

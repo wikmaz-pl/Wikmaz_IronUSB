@@ -1,0 +1,74 @@
+[
+    {
+        "id": "kingston",
+        "vendorName": "Kingston Technology",
+        "productName": "DataTraveler 100 G3",
+        "vid": "0951",
+        "pid": "1666",
+        "rev": "0100",
+        "serial": "0014D112BE54F8C0",
+        "vendorStr": "Kingston",
+        "productStr": "DataTraveler 3.0",
+        "chip": "Phison PS2251-07"
+    },
+    {
+        "id": "sandisk",
+        "vendorName": "SanDisk Corp.",
+        "productName": "Ultra Luxe USB 3.1",
+        "vid": "0781",
+        "pid": "5583",
+        "rev": "0100",
+        "serial": "0401878D6B9F2910",
+        "vendorStr": "SanDisk",
+        "productStr": "Ultra Luxe",
+        "chip": "SMI SM3281AB"
+    },
+    {
+        "id": "samsung",
+        "vendorName": "Samsung Electronics",
+        "productName": "BAR Plus 3.1",
+        "vid": "04E8",
+        "pid": "7060",
+        "rev": "0200",
+        "serial": "0374820000000038",
+        "vendorStr": "Samsung",
+        "productStr": "Flash Drive FIT",
+        "chip": "Samsung V-NAND"
+    },
+    {
+        "id": "corsair",
+        "vendorName": "Corsair Memory",
+        "productName": "Voyager GTX",
+        "vid": "1B1C",
+        "pid": "1A09",
+        "rev": "0300",
+        "serial": "1730030000002194",
+        "vendorStr": "Corsair",
+        "productStr": "Voyager GTX",
+        "chip": "Phison PS3111"
+    },
+    {
+        "id": "transcend",
+        "vendorName": "Transcend Info.",
+        "productName": "JetFlash 790",
+        "vid": "8564",
+        "pid": "1000",
+        "rev": "1100",
+        "serial": "2987154210",
+        "vendorStr": "JetFlash",
+        "productStr": "Transcend 32GB",
+        "chip": "Alcor AU6989SN"
+    },
+    {
+        "id": "pny",
+        "vendorName": "PNY Technologies",
+        "productName": "Turbo Attache 4",
+        "vid": "154B",
+        "pid": "007A",
+        "rev": "0100",
+        "serial": "AA00000000000342",
+        "vendorStr": "PNY",
+        "productStr": "USB 3.0 FD",
+        "chip": "Innostor IS917"
+    }
+]
